@@ -191,7 +191,7 @@
       avatar: 'monsterid',
       meta: 'nick,mail,link'.split(','),
       pageSize: '10',
-      lang: 'en',
+      lang: 'zh-CN',
       recordIP: false,
       serverURLs: '',
       emojiCDN: '',
@@ -207,8 +207,8 @@
   else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
 }
 
-if ('Valine' === 'Valine' || !false) {
-  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+if ('Valine' === 'Valine' || !true) {
+  if (true) btf.loadComment(document.getElementById('vcomment'),loadValine)
   else setTimeout(loadValine, 0)
 } else {
   function loadOtherComment () {
@@ -255,8 +255,8 @@ function commentCount(n){
   }
 }
 
-if ('Valine' === 'Gitalk' || !false) {
-  if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+if ('Valine' === 'Gitalk' || !true) {
+  if (true) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
   else loadGitalk()
 } else {
   function loadOtherComment () {
