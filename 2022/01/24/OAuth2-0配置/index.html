@@ -1,0 +1,353 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OAuth2.0配置 | 阿学博客</title><meta name="keywords" content="OAuth2.0,OAuth2.0 配置"><meta name="author" content="axue"><meta name="copyright" content="axue"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="认证服务器配置准备工作：  spring-oauth-server 认证服务器和资源服务器（也可以分开）。作为一个jar包提供给客户端使用。 spring-security-demo 客户端。资源所有者，需要依赖spring-oauth-server进行授权认证  spring-oauth-server &lt;dependency&gt;    &lt;groupId&gt;org.sprin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OAuth2.0配置">
+<meta property="og:url" content="https://axueit.github.io/2022/01/24/OAuth2-0%E9%85%8D%E7%BD%AE/index.html">
+<meta property="og:site_name" content="阿学博客">
+<meta property="og:description" content="认证服务器配置准备工作：  spring-oauth-server 认证服务器和资源服务器（也可以分开）。作为一个jar包提供给客户端使用。 spring-security-demo 客户端。资源所有者，需要依赖spring-oauth-server进行授权认证  spring-oauth-server &lt;dependency&gt;    &lt;groupId&gt;org.sprin">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://axueit.github.io/img/oauth.png">
+<meta property="article:published_time" content="2022-01-24T08:01:13.000Z">
+<meta property="article:modified_time" content="2022-01-24T15:21:40.399Z">
+<meta property="article:author" content="axue">
+<meta property="article:tag" content="OAuth2.0">
+<meta property="article:tag" content="OAuth2.0 配置">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://axueit.github.io/img/oauth.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://axueit.github.io/2022/01/24/OAuth2-0%E9%85%8D%E7%BD%AE/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: axue","link":"链接: ","source":"来源: 阿学博客","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'OAuth2.0配置',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-01-24 23:21:40'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css"  media="defer" onload="this.media='all'"><meta name="generator" content="Hexo 5.4.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="/img/20220113235331.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/oauth.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">阿学博客</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">OAuth2.0配置</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-01-24T08:01:13.000Z" title="发表于 2022-01-24 16:01:13">2022-01-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-01-24T15:21:40.399Z" title="更新于 2022-01-24 23:21:40">2022-01-24</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%9D%83%E9%99%90%E5%8D%8F%E8%AE%AE/">权限协议</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%9D%83%E9%99%90%E5%8D%8F%E8%AE%AE/%E5%8D%8F%E8%AE%AE%E9%85%8D%E7%BD%AE/">协议配置</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>8分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="OAuth2.0配置"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><hr>
+<h3 id="认证服务器配置"><a href="#认证服务器配置" class="headerlink" title="认证服务器配置"></a>认证服务器配置</h3><p>准备工作：</p>
+<ol>
+<li>spring-oauth-server 认证服务器和资源服务器（也可以分开）。作为一个jar包提供给客户端使用。</li>
+<li>spring-security-demo 客户端。资源所有者，需要依赖spring-oauth-server进行授权认证</li>
+</ol>
+<p><strong>spring-oauth-server</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-cloud-starter-oauth2&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-starter-data-redis&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<p>RedisTokenStore配置：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisTokenStoreConfig</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> RedisConnectionFactory connectionFactory;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 配置Token存储到Redis中</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> TokenStore <span class="title">redisTokenStore</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> RedisTokenStore(connectionFactory);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>两个配置类SecurityProperty和OAuth2Property：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Getter</span></span><br><span class="line"><span class="meta">@Setter</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(prefix = &quot;xwj.security&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SecurityProperty</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> OAuth2Property oauth2 = <span class="keyword">new</span> OAuth2Property();</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Getter</span></span><br><span class="line"><span class="meta">@Setter</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OAuth2Property</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> OAuth2ClientProperty[] clients = &#123;&#125;;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>认证服务器配置：</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 配置认证服务器</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableAuthorizationServer</span> <span class="comment">// 开启认证服务</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AuthorizationServerConfig</span> <span class="keyword">extends</span> <span class="title">AuthorizationServerConfigurerAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> AuthenticationManager authenticationManager;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserDetailsService userDetailsService;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> SecurityProperty securityProperty;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> TokenStore tokenStore;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 用来配置授权（authorization）以及令牌（token）的访问端点和令牌服务(token services)</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configure</span><span class="params">(AuthorizationServerEndpointsConfigurer endpoints)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        endpoints.tokenStore(tokenStore) <span class="comment">// 配置存储token的方式(默认InMemoryTokenStore)</span></span><br><span class="line">                .authenticationManager(authenticationManager) <span class="comment">// 密码模式，必须配置AuthenticationManager，不然不生效</span></span><br><span class="line">                .userDetailsService(userDetailsService); <span class="comment">// 密码模式，这里得配置UserDetailsService</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">         * pathMapping用来配置端点URL链接，有两个参数，都将以 &quot;/&quot; 字符为开始的字符串</span></span><br><span class="line"><span class="comment">         * </span></span><br><span class="line"><span class="comment">         * defaultPath：这个端点URL的默认链接</span></span><br><span class="line"><span class="comment">         * </span></span><br><span class="line"><span class="comment">         * customPath：你要进行替代的URL链接</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        endpoints.pathMapping(<span class="string">&quot;/oauth/token&quot;</span>, <span class="string">&quot;/oauth/xwj&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 用来配置客户端详情服务(给谁发送令牌)</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configure</span><span class="params">(<span class="keyword">final</span> ClientDetailsServiceConfigurer clients)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        InMemoryClientDetailsServiceBuilder builder = clients.inMemory();</span><br><span class="line">        OAuth2ClientProperty[] oauth2Clients = securityProperty.getOauth2().getClients();</span><br><span class="line">        <span class="keyword">if</span> (ArrayUtils.isNotEmpty(oauth2Clients)) &#123;</span><br><span class="line">            <span class="keyword">for</span> (OAuth2ClientProperty config : oauth2Clients) &#123;</span><br><span class="line">                builder <span class="comment">// 使用in-memory存储</span></span><br><span class="line">                        .withClient(config.getClientId()).secret(config.getClientSecret())</span><br><span class="line">                        .accessTokenValiditySeconds(config.getAccessTokenValiditySeconds()) <span class="comment">// 发出去的令牌有效时间(秒)</span></span><br><span class="line">                        .authorizedGrantTypes(<span class="string">&quot;authorization_code&quot;</span>, <span class="string">&quot;client_credentials&quot;</span>, <span class="string">&quot;password&quot;</span>, <span class="string">&quot;refresh_token&quot;</span>) <span class="comment">// 该client允许的授权类型</span></span><br><span class="line">                        .scopes(<span class="string">&quot;all&quot;</span>, <span class="string">&quot;read&quot;</span>, <span class="string">&quot;write&quot;</span>) <span class="comment">// 允许的授权范围(如果是all，则请求中可以不要scope参数，否则必须加上scopes中配置的)</span></span><br><span class="line">                        .autoApprove(<span class="keyword">true</span>); <span class="comment">// 自动审核</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>认证服务器端点配置：</p>
+<ol>
+<li>token模式默认存储在内存中，服务器重启后就没了。</li>
+<li>如果要使用密码模式，必须得配置<code>AuthenticationManager</code>（原因可查看源码AuthorizationServerEndpointsConfigurer的getDefaultTokenGranters方法）。</li>
+<li>在使用密码模式时，如果用户实现了<code>UserDetailsService</code>类，则在验证用户名密码时，使用自定义的方法。因为在校验用户名密码时，使用了DaoAuthenticationProvider中的retrieveUser方法。</li>
+<li>默认获取token的路径是<code>/oauth/token</code>，通过pathMapping方法，可改变默认路径。</li>
+</ol>
+<p>客户端配置：</p>
+<ol>
+<li>这里是从配置类中读取clientId、clientSecret、有效期等，便于扩展。</li>
+<li>authorizedGrantTypes，授权认证类型，这里配置的是授权码模式、客户端模式、密码模式、刷新token模式（还有一种简化模式，这里不演示）。</li>
+<li>如果不配置autoApprove，那获取授权码时，需要手动点一下授权。</li>
+</ol>
+<h3 id="资源服务器配置"><a href="#资源服务器配置" class="headerlink" title="资源服务器配置"></a>资源服务器配置</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableResourceServer</span> <span class="comment">// 开启资源服务</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ResourceServerConfig</span> <span class="keyword">extends</span> <span class="title">ResourceServerConfigurerAdapter</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configure</span><span class="params">(HttpSecurity http)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.configure(http);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用默认的配置，表示对所有的资源都需要授权认证，即授权通过后可以访问所有资源。</p>
+<p><strong>spring-security-demo</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;mysql&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;!-- druid 数据库连接池 --&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.alibaba&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;druid&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.0.5&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.xwj&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-oauth-server&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<p>application.yml配置文件：</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    </span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">application:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">spring-security-demo</span> <span class="comment">#应用程序名称</span></span><br><span class="line">  <span class="comment">#durid 数据库连接池</span></span><br><span class="line">  <span class="attr">datasource:</span> </span><br><span class="line">    <span class="attr">driver-class-name:</span> <span class="string">com.mysql.jdbc.Driver</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">com.alibaba.druid.pool.DruidDataSource</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">jdbc:mysql://127.0.0.1:3306/xwj?autoReconnect=true&amp;failOverReadOnly=false&amp;createDatabaseIfNotExist=true&amp;useSSL=false&amp;useUnicode=true&amp;characterEncoding=utf8</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">root</span></span><br><span class="line">    <span class="attr">password:</span> <span class="number">123456</span></span><br><span class="line">  <span class="attr">jpa:</span></span><br><span class="line">    <span class="attr">open-in-view:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">hibernate:</span></span><br><span class="line">      <span class="attr">ddl-auto:</span> <span class="string">update</span></span><br><span class="line">      <span class="comment">#show-sql: true</span></span><br><span class="line">    <span class="attr">properties:</span></span><br><span class="line">      <span class="attr">hibernate.dialect:</span> <span class="string">org.hibernate.dialect.MySQL57InnoDBDialect</span></span><br><span class="line">  <span class="attr">redis:</span></span><br><span class="line">    <span class="attr">database:</span> <span class="number">2</span> <span class="comment">#Redis数据库索引（默认为0）</span></span><br><span class="line">    <span class="attr">host:</span> <span class="string">localhost</span> <span class="comment">#Redis服务器地址</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">6379</span> </span><br><span class="line">    <span class="attr">password:</span> <span class="comment">## 密码（默认为空）</span></span><br><span class="line">    <span class="attr">pool:</span></span><br><span class="line">      <span class="attr">max-active:</span> <span class="number">8</span> <span class="comment">#连接池最大连接数（使用负值表示没有限制）</span></span><br><span class="line">      <span class="attr">max-wait:</span> <span class="number">-1</span> <span class="comment">#连接池最大阻塞等待时间（使用负值表示没有限制）</span></span><br><span class="line">      <span class="attr">max-idle:</span> <span class="number">8</span>  <span class="comment">#连接池中的最大空闲连接</span></span><br><span class="line">     </span><br><span class="line"><span class="attr">logging:</span></span><br><span class="line">  <span class="attr">level:</span></span><br><span class="line">    <span class="comment">#root: INFO</span></span><br><span class="line">    <span class="comment">#org.hibernate: INFO</span></span><br><span class="line">    <span class="attr">jdbc:</span> <span class="string">off</span></span><br><span class="line">    <span class="attr">jdbc.sqltiming:</span> <span class="string">debug</span></span><br><span class="line">    <span class="attr">com:</span></span><br><span class="line">      <span class="attr">xwj:</span> <span class="string">debug</span></span><br><span class="line">    </span><br><span class="line"><span class="attr">xwj:</span></span><br><span class="line">  <span class="attr">security:</span></span><br><span class="line">    <span class="attr">oauth2:</span></span><br><span class="line">      <span class="attr">storeType:</span> <span class="string">redis</span></span><br><span class="line">      <span class="attr">jwtSignKey:</span> <span class="number">1234567890</span></span><br><span class="line">      <span class="string">clients[0]:</span></span><br><span class="line">        <span class="attr">clientId:</span> <span class="string">test</span></span><br><span class="line">        <span class="attr">clientSecret:</span> <span class="string">testsecret</span></span><br><span class="line">        <span class="attr">accessTokenValiditySeconds:</span> <span class="number">1800</span></span><br><span class="line">      <span class="string">clients[1]:</span></span><br><span class="line">        <span class="attr">clientId:</span> <span class="string">myid</span></span><br><span class="line">        <span class="attr">clientSecret:</span> <span class="string">mysecret</span></span><br><span class="line">        <span class="attr">accessTokenValiditySeconds:</span> <span class="number">3600</span></span><br></pre></td></tr></table></figure>
+
+<p>新建UserDetailsService的实现类MyUserDetailServiceImpl类：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 如果使用密码模式，需要实现UserDetailsService，用于覆盖默认的InMemoryUserDetailsManager方法</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * 可以用来校验用户信息，并且可以添加自定义的用户属性</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyUserDetailServiceImpl</span> <span class="keyword">implements</span> <span class="title">UserDetailsService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> IUserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据username查询用户实体</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> UserDetails <span class="title">loadUserByUsername</span><span class="params">(String username)</span> <span class="keyword">throws</span> UsernameNotFoundException </span>&#123;</span><br><span class="line">        <span class="comment">// 通过用户名查询数据</span></span><br><span class="line">        AuthUserInfo userInfo = userService.findByUsername(username);</span><br><span class="line">        <span class="keyword">if</span> (userInfo == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> BadCredentialsException(<span class="string">&quot;User &#x27;&quot;</span> + username + <span class="string">&quot;&#x27; not found&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 用户角色</span></span><br><span class="line">        List&lt;? extends GrantedAuthority&gt; authorities = AuthorityUtils</span><br><span class="line">                .commaSeparatedStringToAuthorityList(<span class="string">&quot;ROLE_&quot;</span> + userInfo.getRole());</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> SocialUser(username, userInfo.getPassword(), <span class="keyword">true</span>, <span class="keyword">true</span>, <span class="keyword">true</span>, <span class="keyword">true</span>, authorities);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>新建一个密码加密的配置类，用来实现PasswordEncoder(默认的加密方式是BCryptPasswordEncoder)：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 加密方式配置</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PasswordEncoderConfig</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> PasswordEncoder <span class="title">passwordEncoder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> PasswordEncoder() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> String <span class="title">encode</span><span class="params">(CharSequence rawPassword)</span> </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> DigestUtils.md5DigestAsHex(rawPassword.toString().getBytes());</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">matches</span><span class="params">(CharSequence rawPassword, String encodedPassword)</span> </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> encodedPassword.contentEquals(encode(rawPassword));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>用户信息实体：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@Getter</span></span><br><span class="line"><span class="meta">@Setter</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AuthUserInfo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="meta">@TableGenerator(name = &quot;global_id_gen&quot;, allocationSize = 1)</span></span><br><span class="line">    <span class="meta">@GeneratedValue(strategy = GenerationType.TABLE, generator = &quot;global_id_gen&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** 用户名 */</span></span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** 密码 */</span></span><br><span class="line">    <span class="keyword">private</span> String password;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** 角色 */</span></span><br><span class="line">    <span class="keyword">private</span> String role;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>数据访问层，自己实现。造一条用户数据(角色只能为USER，在获取授权码的时候需要拥有该角色的用户进行表单登录)：</p>
+<p><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://img2020.cnblogs.com/blog/647585/202004/647585-20200413204552978-593185706.png" alt="img"></p>
+<p>新建一个IndexController：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;index&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IndexController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取资源</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/getResource&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getResource</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;OK&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取当前授权用户</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/me&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">getCurrrentUser</span><span class="params">(<span class="meta">@AuthenticationPrincipal</span> UserDetails user)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> user;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="校验"><a href="#校验" class="headerlink" title="校验"></a>校验</h3><h4 id="授权码模式"><a href="#授权码模式" class="headerlink" title="授权码模式"></a>授权码模式</h4><blockquote>
+<p>浏览器请求如下地址，获取授权code(其中response_type=code是固定写法，scope为权限，state为自定义数据)：</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">http://localhost/oauth/authorize?client_id=test&amp;redirect_uri=http://www.baidu.com&amp;response_type=code&amp;scope=read</span><br><span class="line">&amp;state=mystate</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>输入用户名密码(xwj/123456)：</p>
+</blockquote>
+<p><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://img2020.cnblogs.com/blog/647585/202004/647585-20200414093144579-1595496589.png" alt="img"></p>
+<blockquote>
+<p>上面配置的自动授权，所有会oauth会立马调用回调地址并返回授权code和state(可以发现state传的什么就返回什么)：</p>
+</blockquote>
+<p><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://img2020.cnblogs.com/blog/647585/202004/647585-20200414093420475-1077472118.png" alt="img"></p>
+<blockquote>
+<p>在获得授权码后，接下来获取访问令牌。使用postman请求 <a target="_blank" rel="noopener" href="http://localhost/oauth/xwj%EF%BC%9A">http://localhost/oauth/xwj：</a></p>
+</blockquote>
+<p><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://img2020.cnblogs.com/blog/647585/202004/647585-20200414094053281-64581062.png" alt="img"></p>
+<p>注意，需要在Authorization里设置Username和Password(就是客户端配置的clientId和clientSecret)，还有TYPE类型：</p>
+<p><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://img2020.cnblogs.com/blog/647585/202004/647585-20200414093949066-2142579330.png" alt="img"></p>
+<p> 获取到的token如下：</p>
+<p><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://img2020.cnblogs.com/blog/647585/202004/647585-20200414094245644-160348988.png" alt="img"></p>
+<blockquote>
+<p>授权码用一次之后，oauth将会把它从缓存中删掉，所以只能使用一次。如果重复使用，将返回：</p>
+</blockquote>
+<p><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://img2020.cnblogs.com/blog/647585/202004/647585-20200414100209116-664045518.png" alt="img"></p>
+<p>如果不带上token，请求资源：<a target="_blank" rel="noopener" href="http://localhost/index/getResource%EF%BC%8C%E5%B0%86%E4%BC%9A%E8%BF%94%E5%9B%9E%E6%97%A0%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%9A">http://localhost/index/getResource，将会返回无权访问：</a></p>
+<p><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://img2020.cnblogs.com/blog/647585/202004/647585-20200414094440030-1439037337.png" alt="img"></p>
+<p>如果带上token，请求资源：<a target="_blank" rel="noopener" href="http://localhost/index/getResource%EF%BC%8C%E5%B0%86%E5%8F%AF%E4%BB%A5%E6%AD%A3%E5%B8%B8%E8%8E%B7%E5%8F%96%E8%B5%84%E6%BA%90%E6%95%B0%E6%8D%AE%EF%BC%9A">http://localhost/index/getResource，将可以正常获取资源数据：</a></p>
+<p><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://img2020.cnblogs.com/blog/647585/202004/647585-20200414094811946-1057124740.png" alt="img"></p>
+<p>如果token错误，将提示无效的token：</p>
+<p><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://img2020.cnblogs.com/blog/647585/202004/647585-20200414094956423-1882532036.png" alt="img"></p>
+<h4 id="客户端模式"><a href="#客户端模式" class="headerlink" title="客户端模式"></a>客户端模式</h4><blockquote>
+<p>直接获取token，请求地址：<a target="_blank" rel="noopener" href="http://localhost/oauth/xwj">http://localhost/oauth/xwj</a></p>
+</blockquote>
+<p><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://img2020.cnblogs.com/blog/647585/202004/647585-20200414095604956-1703295838.png" alt="img"></p>
+<p><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://img2020.cnblogs.com/blog/647585/202004/647585-20200414095647061-1915757831.png" alt="img"></p>
+<p> 获取token操作同上。由于客户端模式每次的参数是一样的，则请求多次返回同一个token，只是有效期在变小</p>
+<h4 id="密码模式"><a href="#密码模式" class="headerlink" title="密码模式"></a>密码模式</h4><blockquote>
+<p>直接获取token，请求地址：<a target="_blank" rel="noopener" href="http://localhost/oauth/xwj">http://localhost/oauth/xwj</a></p>
+</blockquote>
+<p><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://img2020.cnblogs.com/blog/647585/202004/647585-20200414100349685-1000974837.png" alt="img"></p>
+<p><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://img2020.cnblogs.com/blog/647585/202004/647585-20200414100425100-1042645222.png" alt="img"></p>
+<p> 获取token操作同上。由于客户端模式每次的参数是一样的，则请求多次返回同一个token，只是有效期在变小</p>
+<h4 id="刷新token"><a href="#刷新token" class="headerlink" title="刷新token"></a>刷新token</h4><blockquote>
+<p>以授权码模式为例，在授权码的token过期后，使用当时的refresh_token获取新的token：</p>
+</blockquote>
+<p><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://img2020.cnblogs.com/blog/647585/202004/647585-20200414101140351-1816333495.png" alt="img"></p>
+<p><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://img2020.cnblogs.com/blog/647585/202004/647585-20200414101210760-1552599077.png" alt="img"></p>
+<p>获取到新的token，就可以正常访问资源了：</p>
+<p><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://img2020.cnblogs.com/blog/647585/202004/647585-20200414101254614-1032779398.png" alt="img"></p>
+<p>使用redis存储token，打开Redis Desktop Manager工具，可以看到数据结构如下：</p>
+<p><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://img2020.cnblogs.com/blog/647585/202004/647585-20200414101809442-1560931217.png" alt="img"></p>
+<p>至此，演示完毕~~~</p>
+<hr>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">axue</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://axueit.github.io/2022/01/24/OAuth2-0%E9%85%8D%E7%BD%AE/">https://axueit.github.io/2022/01/24/OAuth2-0%E9%85%8D%E7%BD%AE/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://axueit.github.io" target="_blank">阿学博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/OAuth2-0/">OAuth2.0</a><a class="post-meta__tags" href="/tags/OAuth2-0-%E9%85%8D%E7%BD%AE/">OAuth2.0 配置</a></div><div class="post_share"><div class="social-share" data-image="/img/oauth.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2022/01/21/Spring%E5%9F%BA%E7%A1%80/"><img class="next-cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="/img/spring.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Spring基础</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2022/01/16/OAuth2-0/" title="OAuth2.0"><img class="cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://unsplash.it/1600/900?random" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-01-16</div><div class="title">OAuth2.0</div></div></a></div><div><a href="/2022/01/16/OAuth2-0%E7%9A%84%E5%9B%9B%E7%A7%8D%E6%96%B9%E5%BC%8F/" title="OAuth2.0的四种方式"><img class="cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://unsplash.it/1600/900?random" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-01-16</div><div class="title">OAuth2.0的四种方式</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div><div id="comment-switch"><span class="first-comment">Valine</span><span class="switch-btn"></span><span class="second-comment">Gitalk</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="/img/20220113235331.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">axue</div><div class="author-info__description">We can all be big guys</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/axueit"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/axueit" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:1341563138@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">随心情更新~！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A4%E8%AF%81%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%85%8D%E7%BD%AE"><span class="toc-number">1.</span> <span class="toc-text">认证服务器配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B5%84%E6%BA%90%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%85%8D%E7%BD%AE"><span class="toc-number">2.</span> <span class="toc-text">资源服务器配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%A1%E9%AA%8C"><span class="toc-number">3.</span> <span class="toc-text">校验</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8E%88%E6%9D%83%E7%A0%81%E6%A8%A1%E5%BC%8F"><span class="toc-number">3.1.</span> <span class="toc-text">授权码模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%A8%A1%E5%BC%8F"><span class="toc-number">3.2.</span> <span class="toc-text">客户端模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AF%86%E7%A0%81%E6%A8%A1%E5%BC%8F"><span class="toc-number">3.3.</span> <span class="toc-text">密码模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%B7%E6%96%B0token"><span class="toc-number">3.4.</span> <span class="toc-text">刷新token</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/01/24/OAuth2-0%E9%85%8D%E7%BD%AE/" title="OAuth2.0配置"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="/img/oauth.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="OAuth2.0配置"/></a><div class="content"><a class="title" href="/2022/01/24/OAuth2-0%E9%85%8D%E7%BD%AE/" title="OAuth2.0配置">OAuth2.0配置</a><time datetime="2022-01-24T08:01:13.000Z" title="发表于 2022-01-24 16:01:13">2022-01-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/01/21/Spring%E5%9F%BA%E7%A1%80/" title="Spring基础"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="/img/spring.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Spring基础"/></a><div class="content"><a class="title" href="/2022/01/21/Spring%E5%9F%BA%E7%A1%80/" title="Spring基础">Spring基础</a><time datetime="2022-01-21T08:23:25.000Z" title="发表于 2022-01-21 16:23:25">2022-01-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/01/16/OAuth2-0%E7%9A%84%E5%9B%9B%E7%A7%8D%E6%96%B9%E5%BC%8F/" title="OAuth2.0的四种方式"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://unsplash.it/1600/900?random" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="OAuth2.0的四种方式"/></a><div class="content"><a class="title" href="/2022/01/16/OAuth2-0%E7%9A%84%E5%9B%9B%E7%A7%8D%E6%96%B9%E5%BC%8F/" title="OAuth2.0的四种方式">OAuth2.0的四种方式</a><time datetime="2022-01-16T15:05:32.000Z" title="发表于 2022-01-16 23:05:32">2022-01-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/01/16/OAuth2-0/" title="OAuth2.0"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://unsplash.it/1600/900?random" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="OAuth2.0"/></a><div class="content"><a class="title" href="/2022/01/16/OAuth2-0/" title="OAuth2.0">OAuth2.0</a><time datetime="2022-01-16T08:21:37.000Z" title="发表于 2022-01-16 16:21:37">2022-01-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/01/14/Java%E5%9F%BA%E7%A1%80%EF%BC%88%E4%B8%89%EF%BC%89/" title="Java基础（三）"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://unsplash.it/1600/900?random" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Java基础（三）"/></a><div class="content"><a class="title" href="/2022/01/14/Java%E5%9F%BA%E7%A1%80%EF%BC%88%E4%B8%89%EF%BC%89/" title="Java基础（三）">Java基础（三）</a><time datetime="2022-01-14T06:25:30.000Z" title="发表于 2022-01-14 14:25:30">2022-01-14</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By axue</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/"><img class="icp-icon" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://cdn.jsdelivr.net/gh/Daibi-mua/jsdelivr@1.3/icp.png"><span>桂ICP备 2022000469号</span></a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: '1gxN8XQ9VojUstQ3FYi0wJea-gzGzoHsz',
+      appKey: 'D8VOXEznEwliwANDdCeUSCkE',
+      placeholder: '名称输入QQ号自动获取头像邮箱哦！',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'zh-CN',
+      recordIP: true,
+      serverURLs: '',
+      emojiCDN: 'https://cdn.jsdelivr.net/gh/GamerNoTitle/ValineCDN@master/',
+      emojiMaps: {"QQ1":"QQ/aini.gif","QQ2":"QQ/aixin.gif","QQ3":"QQ/aoman.gif","QQ4":"QQ/baiyan.gif","QQ5":"QQ/bangbangtang.gif","QQ6":"QQ/baojin.gif","QQ7":"QQ/baoquan.gif","QQ8":"QQ/bishi.gif","QQ9":"QQ/bizui.gif","QQ11":"QQ/cahan.gif","QQ12":"QQ/caidao.gif","QQ13":"QQ/chi.gif","QQ14":"QQ/ciya.gif","QQ15":"QQ/dabing.gif","QQ16":"QQ/daku.gif","QQ17":"QQ/dan.gif","QQ18":"QQ/deyi.gif","QQ19":"QQ/doge.gif","QQ20":"QQ/fadai.gif","QQ21":"QQ/fanu.gif","QQ22":"QQ/fendou.gif","QQ23":"QQ/ganga.gif","QQ24":"QQ/gouyin.gif","QQ25":"QQ/guzhang.gif","QQ26":"QQ/haixiu.gif","QQ27":"QQ/hanxiao.gif","QQ28":"QQ/haobang.gif","QQ29":"QQ/haqian.gif","QQ30":"QQ/hecai.gif","QQ31":"QQ/hexie.gif","QQ32":"QQ/huaixiao.gif","QQ33":"QQ/jie.gif","QQ34":"QQ/jingkong.gif","QQ35":"QQ/jingxi.gif","QQ36":"QQ/jingya.gif","QQ37":"QQ/juhua.gif","QQ38":"QQ/keai.gif","QQ39":"QQ/kelian.gif","QQ40":"QQ/koubi.gif","QQ41":"QQ/ku.gif","QQ42":"QQ/kuaikule.gif","QQ43":"QQ/kulou.gif","QQ44":"QQ/kun.gif","QQ45":"QQ/lanqiu.gif","QQ46":"QQ/leiben.gif","QQ47":"QQ/lenghan.gif","QQ48":"QQ/liuhan.gif","QQ49":"QQ/liulei.gif","QQ50":"QQ/nanguo.gif","QQ51":"QQ/OK.gif","QQ52":"QQ/penxue.gif","QQ53":"QQ/piezui.gif","QQ54":"QQ/pijiu.gif","QQ55":"QQ/qiang.gif","QQ56":"QQ/qiaoda.gif","QQ57":"QQ/qinqin.gif","QQ58":"QQ/qiudale.gif","QQ59":"QQ/quantou.gif","QQ60":"QQ/saorao.gif","QQ61":"QQ/se.gif","QQ62":"QQ/shengli.gif","QQ63":"QQ/shouqiang.gif","QQ64":"QQ/shuai.gif","QQ65":"QQ/shui.gif","QQ66":"QQ/tiaopi.gif","QQ67":"QQ/touxiao.gif","QQ68":"QQ/tu.gif","QQ69":"QQ/tuosai.gif","QQ70":"QQ/weiqu.gif","QQ71":"QQ/weixiao.gif","QQ72":"QQ/woshou.gif","QQ73":"QQ/wozuimei.gif","QQ74":"QQ/wunai.gif","QQ75":"QQ/xia.gif","QQ76":"QQ/xiaojiujie.gif","QQ77":"QQ/xiaoku.gif","QQ78":"QQ/xiaoyanger.gif","QQ79":"QQ/xieyanxiao.gif","QQ80":"QQ/xigua.gif","QQ81":"QQ/xu.gif","QQ82":"QQ/yangtuo.gif","QQ83":"QQ/yinxian.gif","QQ84":"QQ/yiwen.gif","QQ85":"QQ/youhengheng.gif","QQ86":"QQ/youling.gif","QQ87":"QQ/yun.gif","QQ88":"QQ/zaijian.gif","QQ89":"QQ/zhayanjian.gif","QQ90":"QQ/zhemo.gif","QQ91":"QQ/zhouma.gif","QQ92":"QQ/zhuakuang.gif","QQ93":"QQ/zuohengheng.gif"},
+      enableQQ: true,
+      path: window.location.pathname,
+      requiredFields: ["nick,mail"],
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !true) {
+  if (true) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script>function addGitalkSource () {
+  const ele = document.createElement('link')
+  ele.rel = 'stylesheet'
+  ele.href= 'https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css'
+  document.getElementsByTagName('head')[0].appendChild(ele)
+}
+
+function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: '245089474131ffb48c37',
+      clientSecret: 'df7dc7598f63a5efc98c327f144a4c7f99e2950c',
+      repo: 'blog-gitalk',
+      owner: 'axueit',
+      admin: ['axueit'],
+      id: 'b8ad2ad53ed49aa7975c1995d543a47a',
+      language: 'zh-CN',
+      perPage: 10,
+      distractionFreeMode: true,
+      pagerDirection: 'last',
+      createIssueManually: true,
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    addGitalkSource()
+    getScript('https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.innerHTML= n
+  }
+}
+
+if ('Valine' === 'Gitalk' || !true) {
+  if (true) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
